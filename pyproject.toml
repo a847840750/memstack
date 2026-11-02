@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "memstack-agent-memory"
+version = "0.4.1"
+description = "Portable layered memory stack for LLM agents: episodes, facts, procedures, bi-temporal state, hybrid retrieval, evidence-chain query decomposition, multi-agent teams, MCP server."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "MemStack" }]
+keywords = ["llm", "agent", "memory", "rag", "context-engineering", "multi-agent", "mcp", "vector-search"]
+classifiers = [
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Intended Audience :: Developers",
+    "Development Status :: 4 - Beta",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/a847840750/memstack"
+Repository = "https://github.com/a847840750/memstack"
+Issues = "https://github.com/a847840750/memstack/issues"
+
+[project.optional-dependencies]
+fast = ["numpy"]
+mcp = []  # MCP server 零 SDK，直接用 stdio
+llm = []  # 经 OpenAI 兼容端点接入，同样零 SDK
+dev = ["numpy"]
+
+[project.scripts]
+memstack-mcp = "memstack.mcp_server:main"
+memstack-server = "memstack.server:main"
+
+[tool.setuptools.packages.find]
+include = ["memstack*"]
+
+[tool.setuptools.package-data]
+memstack = ["py.typed"]

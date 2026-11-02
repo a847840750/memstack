@@ -1,0 +1,362 @@
+[
+  {
+    "dataset": "locomo",
+    "conversations": 10,
+    "questions": 400,
+    "budget": 800,
+    "top_k": 8,
+    "elapsed_s": 354.9,
+    "methods": {
+      "MemStack": {
+        "overall": {
+          "n": 397,
+          "unit_recall_any": 0.8337531486146096,
+          "unit_recall_all": 0.6750629722921915,
+          "mrr": 0.5717614249730119,
+          "turn_hit": 0.5491183879093199,
+          "turn_token_recall": 0.670393521064912,
+          "answer_in_context": 0.08564231738035265,
+          "answer_token_recall": 0.2040207588381392,
+          "avg_tokens": 572.3803526448363
+        },
+        "by_category": {
+          "adversarial": {
+            "n": 80,
+            "unit_recall_any": 0.925,
+            "unit_recall_all": 0.925,
+            "mrr": 0.680327380952381,
+            "turn_hit": 0.6625,
+            "turn_token_recall": 0.7913212058897374,
+            "answer_in_context": 0.0125,
+            "answer_token_recall": 0.0,
+            "avg_tokens": 583.4125
+          },
+          "multi-hop": {
+            "n": 79,
+            "unit_recall_any": 0.7974683544303798,
+            "unit_recall_all": 0.22784810126582278,
+            "mrr": 0.48789933694996984,
+            "turn_hit": 0.4050632911392405,
+            "turn_token_recall": 0.5082340177231958,
+            "answer_in_context": 0.05063291139240506,
+            "answer_token_recall": 0.24561163168758107,
+            "avg_tokens": 575.2025316455696
+          },
+          "open-domain": {
+            "n": 78,
+            "unit_recall_any": 0.6153846153846154,
+            "unit_recall_all": 0.38461538461538464,
+            "mrr": 0.3608058608058608,
+            "turn_hit": 0.3333333333333333,
+            "turn_token_recall": 0.4564490546238994,
+            "answer_in_context": 0.05128205128205128,
+            "answer_token_recall": 0.14488650594419825,
+            "avg_tokens": 514.6410256410256
+          },
+          "single-hop": {
+            "n": 80,
+            "unit_recall_any": 0.925,
+            "unit_recall_all": 0.925,
+            "mrr": 0.6797916666666667,
+            "turn_hit": 0.5875,
+            "turn_token_recall": 0.7373649371445927,
+            "answer_in_context": 0.3,
+            "answer_token_recall": 0.5234388528138528,
+            "avg_tokens": 577.7875
+          },
+          "temporal": {
+            "n": 80,
+            "unit_recall_any": 0.9,
+            "unit_recall_all": 0.9,
+            "mrr": 0.6436607142857143,
+            "turn_hit": 0.75,
+            "turn_token_recall": 0.8512227844903381,
+            "answer_in_context": 0.0125,
+            "answer_token_recall": 0.10520833333333332,
+            "avg_tokens": 609.45
+          }
+        }
+      },
+      "MemStack-ep": {
+        "overall": {
+          "n": 397,
+          "unit_recall_any": 0.8664987405541562,
+          "unit_recall_all": 0.7279596977329975,
+          "mrr": 0.6426082523689577,
+          "turn_hit": 0.5994962216624685,
+          "turn_token_recall": 0.7314417161881432,
+          "answer_in_context": 0.09319899244332494,
+          "answer_token_recall": 0.23254658160199723,
+          "avg_tokens": 725.0403022670025
+        },
+        "by_category": {
+          "adversarial": {
+            "n": 80,
+            "unit_recall_any": 0.9625,
+            "unit_recall_all": 0.9625,
+            "mrr": 0.7939732142857143,
+            "turn_hit": 0.7,
+            "turn_token_recall": 0.8426962876990969,
+            "answer_in_context": 0.025,
+            "answer_token_recall": 0.0125,
+            "avg_tokens": 737.6625
+          },
+          "multi-hop": {
+            "n": 79,
+            "unit_recall_any": 0.7341772151898734,
+            "unit_recall_all": 0.2911392405063291,
+            "mrr": 0.4974984930681133,
+            "turn_hit": 0.45569620253164556,
+            "turn_token_recall": 0.5729235713265843,
+            "answer_in_context": 0.06329113924050633,
+            "answer_token_recall": 0.28319542623340094,
+            "avg_tokens": 719.1772151898734
+          },
+          "open-domain": {
+            "n": 78,
+            "unit_recall_any": 0.7435897435897436,
+            "unit_recall_all": 0.48717948717948717,
+            "mrr": 0.4368742368742369,
+            "turn_hit": 0.4230769230769231,
+            "turn_token_recall": 0.5557977873465161,
+            "answer_in_context": 0.0641025641025641,
+            "answer_token_recall": 0.17850016792324483,
+            "avg_tokens": 690.6794871794872
+          },
+          "single-hop": {
+            "n": 80,
+            "unit_recall_any": 0.9375,
+            "unit_recall_all": 0.9375,
+            "mrr": 0.7247023809523809,
+            "turn_hit": 0.6125,
+            "turn_token_recall": 0.7834496876616138,
+            "answer_in_context": 0.3,
+            "answer_token_recall": 0.5721942640692641,
+            "avg_tokens": 736.7375
+          },
+          "temporal": {
+            "n": 80,
+            "unit_recall_any": 0.95,
+            "unit_recall_all": 0.95,
+            "mrr": 0.7530357142857143,
+            "turn_hit": 0.8,
+            "turn_token_recall": 0.8959686718750953,
+            "answer_in_context": 0.0125,
+            "answer_token_recall": 0.115625,
+            "avg_tokens": 740.0125
+          }
+        }
+      },
+      "Dense only": {
+        "overall": {
+          "n": 397,
+          "unit_recall_any": 0.2216624685138539,
+          "unit_recall_all": 0.15869017632241814,
+          "mrr": 0.2216624685138539,
+          "turn_hit": 0.20654911838790932,
+          "turn_token_recall": 0.48922304629267654,
+          "answer_in_context": 0.05289672544080604,
+          "answer_token_recall": 0.13787452751558546,
+          "avg_tokens": 641.4861460957179
+        },
+        "by_category": {
+          "adversarial": {
+            "n": 80,
+            "unit_recall_any": 0.325,
+            "unit_recall_all": 0.325,
+            "mrr": 0.325,
+            "turn_hit": 0.3,
+            "turn_token_recall": 0.5840366146703911,
+            "answer_in_context": 0.025,
+            "answer_token_recall": 0.0,
+            "avg_tokens": 662.9375
+          },
+          "multi-hop": {
+            "n": 79,
+            "unit_recall_any": 0.24050632911392406,
+            "unit_recall_all": 0.012658227848101266,
+            "mrr": 0.24050632911392406,
+            "turn_hit": 0.22784810126582278,
+            "turn_token_recall": 0.45011976165378637,
+            "answer_in_context": 0.05063291139240506,
+            "answer_token_recall": 0.1601485012877418,
+            "avg_tokens": 626.1645569620254
+          },
+          "open-domain": {
+            "n": 78,
+            "unit_recall_any": 0.14102564102564102,
+            "unit_recall_all": 0.05128205128205128,
+            "mrr": 0.14102564102564102,
+            "turn_hit": 0.1282051282051282,
+            "turn_token_recall": 0.37682345731939065,
+            "answer_in_context": 0.038461538461538464,
+            "answer_token_recall": 0.12625944212482673,
+            "avg_tokens": 641.1538461538462
+          },
+          "single-hop": {
+            "n": 80,
+            "unit_recall_any": 0.2375,
+            "unit_recall_all": 0.2375,
+            "mrr": 0.2375,
+            "turn_hit": 0.2125,
+            "turn_token_recall": 0.528203908575069,
+            "answer_in_context": 0.15,
+            "answer_token_recall": 0.3410777417027417,
+            "avg_tokens": 672.4125
+          },
+          "temporal": {
+            "n": 80,
+            "unit_recall_any": 0.1625,
+            "unit_recall_all": 0.1625,
+            "mrr": 0.1625,
+            "turn_hit": 0.1625,
+            "turn_token_recall": 0.5036327084624272,
+            "answer_in_context": 0.0,
+            "answer_token_recall": 0.061875,
+            "avg_tokens": 604.5625
+          }
+        }
+      },
+      "BM25 only": {
+        "overall": {
+          "n": 397,
+          "unit_recall_any": 0.5818639798488665,
+          "unit_recall_all": 0.4659949622166247,
+          "mrr": 0.5818639798488665,
+          "turn_hit": 0.5491183879093199,
+          "turn_token_recall": 0.693226739223008,
+          "answer_in_context": 0.0906801007556675,
+          "answer_token_recall": 0.19859715571302472,
+          "avg_tokens": 658.080604534005
+        },
+        "by_category": {
+          "adversarial": {
+            "n": 80,
+            "unit_recall_any": 0.7625,
+            "unit_recall_all": 0.7625,
+            "mrr": 0.7625,
+            "turn_hit": 0.7125,
+            "turn_token_recall": 0.8355232674073418,
+            "answer_in_context": 0.025,
+            "answer_token_recall": 0.0125,
+            "avg_tokens": 672.9625
+          },
+          "multi-hop": {
+            "n": 79,
+            "unit_recall_any": 0.45569620253164556,
+            "unit_recall_all": 0.012658227848101266,
+            "mrr": 0.45569620253164556,
+            "turn_hit": 0.43037974683544306,
+            "turn_token_recall": 0.5360059535538528,
+            "answer_in_context": 0.0379746835443038,
+            "answer_token_recall": 0.19196942298208122,
+            "avg_tokens": 648.8227848101266
+          },
+          "open-domain": {
+            "n": 78,
+            "unit_recall_any": 0.34615384615384615,
+            "unit_recall_all": 0.20512820512820512,
+            "mrr": 0.34615384615384615,
+            "turn_hit": 0.3076923076923077,
+            "turn_token_recall": 0.49942463056972725,
+            "answer_in_context": 0.05128205128205128,
+            "answer_token_recall": 0.12414526356834049,
+            "avg_tokens": 643.9615384615385
+          },
+          "single-hop": {
+            "n": 80,
+            "unit_recall_any": 0.6875,
+            "unit_recall_all": 0.6875,
+            "mrr": 0.6875,
+            "turn_hit": 0.6375,
+            "turn_token_recall": 0.78882679072441,
+            "answer_in_context": 0.325,
+            "answer_token_recall": 0.5661769480519481,
+            "avg_tokens": 695.2125
+          },
+          "temporal": {
+            "n": 80,
+            "unit_recall_any": 0.65,
+            "unit_recall_all": 0.65,
+            "mrr": 0.65,
+            "turn_hit": 0.65,
+            "turn_token_recall": 0.7995427413225118,
+            "answer_in_context": 0.0125,
+            "answer_token_recall": 0.09625,
+            "avg_tokens": 628.975
+          }
+        }
+      },
+      "Full context": {
+        "overall": {
+          "n": 397,
+          "unit_recall_any": 0.022670025188916875,
+          "unit_recall_all": 0.017632241813602016,
+          "mrr": 0.022670025188916875,
+          "turn_hit": 0.022670025188916875,
+          "turn_token_recall": 0.3529982200956138,
+          "answer_in_context": 0.012594458438287154,
+          "answer_token_recall": 0.06823798577576916,
+          "avg_tokens": 518.5113350125945
+        },
+        "by_category": {
+          "adversarial": {
+            "n": 80,
+            "unit_recall_any": 0.0,
+            "unit_recall_all": 0.0,
+            "mrr": 0.0,
+            "turn_hit": 0.0,
+            "turn_token_recall": 0.326793085333028,
+            "answer_in_context": 0.025,
+            "answer_token_recall": 0.0,
+            "avg_tokens": 490.2
+          },
+          "multi-hop": {
+            "n": 79,
+            "unit_recall_any": 0.012658227848101266,
+            "unit_recall_all": 0.0,
+            "mrr": 0.012658227848101266,
+            "turn_hit": 0.012658227848101266,
+            "turn_token_recall": 0.354485480771384,
+            "answer_in_context": 0.012658227848101266,
+            "answer_token_recall": 0.07615577109247995,
+            "avg_tokens": 515.1392405063291
+          },
+          "open-domain": {
+            "n": 78,
+            "unit_recall_any": 0.05128205128205128,
+            "unit_recall_all": 0.038461538461538464,
+            "mrr": 0.05128205128205128,
+            "turn_hit": 0.05128205128205128,
+            "turn_token_recall": 0.3441042897765465,
+            "answer_in_context": 0.01282051282051282,
+            "answer_token_recall": 0.08109303445841907,
+            "avg_tokens": 570.7307692307693
+          },
+          "single-hop": {
+            "n": 80,
+            "unit_recall_any": 0.0,
+            "unit_recall_all": 0.0,
+            "mrr": 0.0,
+            "turn_hit": 0.0,
+            "turn_token_recall": 0.36101689325176456,
+            "answer_in_context": 0.0125,
+            "answer_token_recall": 0.1676948051948052,
+            "avg_tokens": 536.125
+          },
+          "temporal": {
+            "n": 80,
+            "unit_recall_any": 0.05,
+            "unit_recall_all": 0.05,
+            "mrr": 0.05,
+            "turn_hit": 0.05,
+            "turn_token_recall": 0.37838759384581655,
+            "answer_in_context": 0.0,
+            "answer_token_recall": 0.016666666666666666,
+            "avg_tokens": 481.625
+          }
+        }
+      }
+    }
+  }
+]
