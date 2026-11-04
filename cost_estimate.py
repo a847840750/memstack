@@ -32,9 +32,9 @@ class Price:
 # 2026-10 公开定价（美元/百万 token），使用前请以官网为准
 DEFAULT_PRICES = [
     Price("DeepSeek-chat", 0.27, 1.10, "deepseek.com 官方价；人民币 ≈ $×7.2"),
-    Price("GPT-4.1-mini", 0.40, 1.60, "SimpleMem 论文同 backbone"),
+    Price("GPT-4.1-mini", 0.40, 1.60, "中档：抽取质量与成本较均衡"),
     Price("GPT-4o-mini", 0.15, 0.60, "便宜但抽取质量弱，不建议大规模 judge"),
-    Price("GPT-4o", 2.50, 10.00, "高配；Mem0/Zep 论文口径，成本高一个量级"),
+    Price("GPT-4o", 2.50, 10.00, "高配：judge 质量高，成本高一个量级"),
 ]
 
 USD_TO_CNY = 7.2

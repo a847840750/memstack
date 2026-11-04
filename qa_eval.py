@@ -1,4 +1,4 @@
-"""LoCoMo QA 层评测：LLM reader + LLM judge，以及官方 mem0 仓库基线。
+"""LoCoMo QA 层评测：LLM reader + LLM judge，以及可选的外部库对照基线。
 
 与 public_eval.py 的分工：
   - public_eval.py：只评**检索层**（证据会话是否召回、token 成本、延迟），不需要 LLM。
@@ -17,8 +17,11 @@
     MEMSTACK_LLM_MODEL=gpt-4o-mini OPENAI_API_KEY=sk-... \
         python qa_eval.py --limit 200 --reader llm --judge llm
 
-    # 只算 token-F1 / EM（可与 A-MEM、SimpleMem 的 F1 口径对照，但仍受 reader 限制）
+    # 只算 token-F1 / EM（零依赖下界口径，仍受 reader 能力限制）
     python qa_eval.py --limit 300 --reader extractive --judge f1
+
+    # 可选：外部库对照基线（需 pip install mem0ai；与 MemStack 同预算比较）
+    python qa_eval.py --limit 50 --budget 600 --methods extlib --reader hf --judge hf
 """
 
 from __future__ import annotations
@@ -287,10 +290,10 @@ class LLMJudge:
 
 
 # ======================================================================================
-# 官方 mem0 仓库基线
+# 外部库对照基线（可选，需安装 mem0ai）
 # ======================================================================================
 class HashEmbedderAdapter:
-    """把 MemStack 的零依赖 hashing 向量接进 mem0 的 EmbeddingBase 接口。"""
+    """把零依赖 hashing 向量接到外部库的 embedding 接口。"""
 
     def __init__(self, embedder: HashingEmbedder) -> None:
         self.embedder = embedder
@@ -303,25 +306,27 @@ class HashEmbedderAdapter:
         return self.embedder.embed(list(texts))
 
 
-class Mem0Backend:
-    """运行 mem0ai 官方包（infer=False 原始消息模式），而不是机制近似。
+class ExternalLibBackend:
+    """外部记忆库对照基线（原始消息模式，不做 LLM 事实抽取）。
 
     限制（重要）：
-      - 没有 LLM API key，因此不做 mem0 的 LLM 事实抽取，只存原始消息；
-      - 向量后端换成零依赖 hashing 向量，避免下载 sentence-transformers 模型；
-      - 检索是 mem0 自己的 dense（装了 fastembed 时会自动叠加 BM25）。
-    因此这一行是「官方代码的检索下限」，不是 mem0 论文里的完整管线。
+      - 没有 LLM API key 时只存原始消息，不做事实抽取；
+      - 向量后端换成零依赖 hashing 向量，避免下载额外模型；
+      - 检索使用外部库自己的 dense（若安装了可选的 BM25 组件会自动叠加）。
+    因此这一行是「外部库的检索下限」，不代表其完整管线。
     """
 
-    name = "Mem0(官方, 无LLM抽取)"
+    name = "External-Lib"
 
     def __init__(self, samples: Sequence[dict[str, Any]], budget: int, top_k: int = 40) -> None:
-        os.environ.setdefault("MEM0_TELEMETRY", "False")
-        from mem0 import Memory  # 延迟导入：没装 mem0ai 时给出明确提示
-
         self.budget = budget
         self.top_k = top_k
-        self.tmpdir = tempfile.mkdtemp(prefix="mem0_eval_")
+        self.tmpdir = tempfile.mkdtemp(prefix="extlib_eval_")
+        try:
+            from mem0 import Memory  # 延迟导入：未安装 mem0ai 时给出明确提示
+        except ImportError as exc:  # pragma: no cover - 取决于可选依赖
+            raise RuntimeError("未安装可选依赖 mem0ai，跳过外部库基线") from exc
+        os.environ.setdefault("MEM0_TELEMETRY", "False")
         config = {
             "vector_store": {
                 "provider": "qdrant",
@@ -382,7 +387,7 @@ class Mem0Backend:
         return MethodOutput(context=context, units=units, tokens=total), latency_ms
 
     def close(self) -> None:
-        """显式关闭 qdrant 本地客户端；否则进程退出时 __del__ 可能触发原生崩溃。"""
+        """显式关闭本地向量库客户端，避免进程退出时触发原生崩溃。"""
         try:
             client = getattr(self.memory.vector_store, "client", None)
             if client is not None:
@@ -494,16 +499,16 @@ def run(args: argparse.Namespace, backend: Any | None = None) -> dict[str, Any]:
 
     methods = [m.strip() for m in args.methods.split(",") if m.strip()]
     if args.dataset != "locomo":
-        methods = [m for m in methods if m != "mem0"]
-    mem0_backend = None
-    if "mem0" in methods:
+        methods = [m for m in methods if m != "extlib"]
+    external_backend = None
+    if "extlib" in methods:
         t0 = time.time()
         try:
-            mem0_backend = Mem0Backend(samples, args.budget, top_k=args.top_k * 5)
-            print(f"[mem0] ingest {time.time() - t0:.1f}s（官方包，infer=False）")
-        except Exception as exc:  # noqa: BLE001 - 没装 mem0ai 时降级
-            print(f"[mem0] 跳过：{type(exc).__name__}: {exc}")
-            methods = [m for m in methods if m != "mem0"]
+            external_backend = ExternalLibBackend(samples, args.budget, top_k=args.top_k * 5)
+            print(f"[extlib] ingest {time.time() - t0:.1f}s（外部库，infer=False）")
+        except Exception as exc:  # noqa: BLE001 - 未安装可选依赖时降级
+            print(f"[extlib] 跳过：{type(exc).__name__}: {exc}")
+            methods = [m for m in methods if m != "extlib"]
 
     print(f"[{args.dataset}] questions={len(items)}  budget={args.budget}  methods={methods}")
 
@@ -564,8 +569,8 @@ def run(args: argparse.Namespace, backend: Any | None = None) -> dict[str, Any]:
             t0 = time.perf_counter()
             out = memstack_output(stack_ep, item, episode_maps_ep[sample_id], args.budget)
             outputs["memstack-ep"] = (out, (time.perf_counter() - t0) * 1000)
-        if "mem0" in methods and mem0_backend is not None and item.qid not in done["mem0"]:
-            outputs["mem0"] = mem0_backend.output(item)
+        if "extlib" in methods and external_backend is not None and item.qid not in done["extlib"]:
+            outputs["extlib"] = external_backend.output(item)
         if "bm25" in methods and item.qid not in done["bm25"]:
             index = get_index(item)
             t0 = time.perf_counter()
@@ -602,8 +607,8 @@ def run(args: argparse.Namespace, backend: Any | None = None) -> dict[str, Any]:
 
     stack.close()
     stack_ep.close()
-    if mem0_backend is not None:
-        mem0_backend.close()
+    if external_backend is not None:
+        external_backend.close()
 
     result = build_result(args, methods, rows, reader.name, judge.name, len(items), started)
     print_summary(result["methods"], reader.name, judge.name, len(items), args.dataset)
@@ -753,8 +758,8 @@ def main() -> None:
     parser.add_argument("--turns", type=int, default=3)
     parser.add_argument("--episode-chars", type=int, default=900)
     parser.add_argument(
-        "--methods", default="memstack,memstack-mr,memstack-ep,mem0,bm25",
-        help="逗号分隔：memstack,memstack-mr,memstack-ep,mem0,bm25,full（full=预算内最近历史）",
+        "--methods", default="memstack,memstack-mr,memstack-ep,extlib,bm25",
+        help="逗号分隔：memstack,memstack-mr,memstack-ep,extlib,bm25,full（full=预算内最近历史）",
     )
     parser.add_argument("--reader", choices=["hf", "llm", "extractive"], default="extractive")
     parser.add_argument("--judge", choices=["hf", "llm", "f1"], default="f1")

@@ -39,9 +39,9 @@ class MemoryConfig:
     evidence_chain_max_subs: int = 2       # 最多分解出的子查询数
     evidence_chain_slots: int = 2          # 一般子查询的补证名额（每子查询）
     evidence_chain_enum_slots: int = 4     # 枚举聚合类补证名额（答案分散度更高）
-    evidence_chain_neighbor: bool = True   # RF-Mem 双路径：首跳低分时走图近邻扩证
+    evidence_chain_neighbor: bool = True   # 双路径扩证：首跳低分时走图近邻，而非盲查整库
     evidence_chain_min_top_score: float = 0.30  # 低于此值视为"熟悉度不足"
-    status_aware_packing: bool = True  # TokenPilot 落点：预算不足时 active 优先，历史值放尾部
+    status_aware_packing: bool = True  # 生命周期感知打包：预算不足时 active 优先，历史值放尾部
     # 证据保底：预算被高分的抽取事实吃掉时，仍为原始 episode 留出固定比例，
     # 否则原文证据（精确数值/日期/原话）会被挤出上下文。
     episode_reserve_ratio: float = 0.30

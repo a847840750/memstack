@@ -270,7 +270,7 @@ class RememberResult:
 
 @dataclass
 class MemoryBlock:
-    """Letta 风格的常驻上下文块（core memory）。"""
+    """常驻上下文块（core memory）：每次请求直接注入，无需检索。"""
 
     label: str
     value: str

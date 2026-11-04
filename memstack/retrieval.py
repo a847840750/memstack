@@ -1,11 +1,11 @@
 """检索与上下文组装：混合召回 → 多粒度路由 → 图扩展 → 时间策略 → 预算打包。
 
-对应论文机制：
-  - Mem0 v3 / Graphiti：dense + BM25 + entity 多信号融合
-  - MemGAS：按 kind 的相似度分布熵做粒度路由
-  - PlugMem / GAM：图扩展与 provenance 回取
-  - RF-Mem：置信度不足时给出继续检索信号
-  - LightMem / TokenPilot：按预算注入，不把整库塞进上下文
+设计要点：
+  - 多信号融合：dense + BM25 + entity + prior + graph，覆盖语义、词法、实体、热度与多跳；
+  - 粒度路由：按 kind 的相似度分布熵计算软权重，避免硬路由误杀正确粒度；
+  - 图扩展：沿 provenance / mentions 边做带重启随机游走，补充多跳证据；
+  - 置信度不足时返回继续检索信号，而不是假装已经答完；
+  - 按 token 预算注入，只放与查询相关的片段，不把整库塞进上下文。
 """
 
 from __future__ import annotations
@@ -709,7 +709,7 @@ class HybridRetriever:
             )
             remaining = max(40, query.token_budget - estimate_tokens(header))
         lines = [header] if header else []
-        # TokenPilot cache-aware 落点：预算不足时"当前值（active）优先进入上下文，
+        # 生命周期感知打包：预算不足时"当前值（active）优先进入上下文，
         # 历史值（superseded/archived）放尾部"，避免旧事实挤掉当前事实；前缀仍保持
         # blocks → 记忆条目的稳定结构。预算充足时顺序与 hits 完全一致，不影响现有指标。
         if (

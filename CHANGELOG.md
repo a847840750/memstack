@@ -62,7 +62,7 @@ All-Unit 74.3%→**75.6%**。
   - 分名额合并：保留首轮 `top-(k − n_sub × slots)` 证据，每子查询只补未见过的新证据
     （枚举 4 个、其他 2 个名额），补证分数 ×0.9 公平竞争——根治旧词袋补证"挤掉首轮
     高分证据"的问题（v2 教训）。
-  - RF-Mem 双路径落地：首跳低分（熟悉度不足）时走 PPR 近邻扩证，而非盲查整库。
+  - 双路径扩证落地：首跳低分（熟悉度不足）时走 PPR 近邻扩证，而非盲查整库。
 - `public_eval.py` 新增 `MemStack-mr`（`evidence_chain=False` + 旧多轮补证）同库对照，
   用于隔离证据链的增量。
 
@@ -74,7 +74,7 @@ LongMemEval oracle 500 中性不退化；合成基准 33 题 100% 不退化。
 
 - **证据链共享缓存**：同一 scope/时间窗下，链内各跳复用候选集、实体节点与 PPR 图分数，
   子查询延迟 53.5ms→16.9ms（约 -69%）。
-- **TokenPilot cache-aware 打包**（`status_aware_packing`，默认开）：预算不足时
+- **cache-aware 打包**（`status_aware_packing`，默认开）：预算不足时
   active 记忆优先进入上下文、历史值放尾部；预算充足时行为不变。
 - **`LLMQueryDecomposer`**：LLM 化分解器（结构化输出 JSON 校验、markdown fence 容忍、
   异常/非法输出自动回退规则版），`MemoryStack(query_decomposer=...)` 注入；
@@ -96,7 +96,8 @@ LongMemEval oracle 500 中性不退化；合成基准 33 题 100% 不退化。
 - **零 SDK MCP server**（stdio）：`python -m memstack.mcp_server`，工具面与
   `as_tools()` 一致。
 - **QA 层评测**：`qa_eval.py`，reader/judge 三种后端（本地 HF / OpenAI 兼容端点 /
-  规则，其中规则零依赖），断点续跑，对抗题确定性拒答检测；接入官方 `mem0ai` 包作基线。
+  规则，其中规则零依赖），断点续跑，对抗题确定性拒答检测；可选外部库对照基线
+  （`--methods extlib`，需安装 `mem0ai`）。
 - **LLM 开箱工厂**：`build_stack` / `build_llm_client` / `LLMExtractor` /
   `LLMSummarizer`，环境变量无感接入任意 OpenAI 兼容端点。
 
@@ -111,7 +112,7 @@ LongMemEval oracle 500 中性不退化；合成基准 33 题 100% 不退化。
 - 多轮补证（multi-round retrieval）：多跳/聚合问题第二轮检索补足跨会话证据。
 - 原始证据回填（evidence expansion）：top-3 事实回取 provenance 原文附入上下文。
 - 公开数据集评测 `public_eval.py`：NDCG@k、每方法延迟、bootstrap 95% CI、LoCoMo 分层
-  抽样；Mem0-like / Zep-like / A-MEM-like / MemoryOS-like 四个同预算 SOTA 风格基线；
+  抽样；Fact+Hybrid / Temporal-Graph / Fact+Dense / Episode+Prior 四个同预算机制基线；
   所有基线统一 800-token 裁剪保证公平。
 
 ## [0.1.0] - 2026-10-26

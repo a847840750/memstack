@@ -396,7 +396,7 @@ class MemoryStack:
         return self.retriever.build_context(recall_query, hits)
 
     # ----------------------------------------------------------------------------------
-    # 证据链检索（v4）：分解 → 逐跳检索 → 分名额合并；补 RF-Mem 双路径近邻扩证
+    # 证据链检索（v4）：分解 → 逐跳检索 → 分名额合并；辅以双路径近邻扩证
     # ----------------------------------------------------------------------------------
     def _evidence_chain_recall(
         self,
@@ -429,7 +429,7 @@ class MemoryStack:
             trace.setdefault("subqueries", []).append(
                 {"text": sub.text, "reason": sub.reason, "hits": len(sub_hits)}
             )
-        # RF-Mem 双路径：首跳最高分过低（熟悉度不足）→ 走图近邻扩证的"回忆"路径
+        # 双路径：首跳最高分过低（熟悉度不足）→ 走图近邻扩证的"回忆"路径
         if cfg.evidence_chain_neighbor and sub_results and should_neighbor_expand(
             max((h.score for h in hits), default=0.0), cfg.evidence_chain_min_top_score,
         ):
@@ -453,7 +453,7 @@ class MemoryStack:
         return merged
 
     def _nearby_expand(self, recall_query: RecallQuery, hits: Sequence[RecallHit]) -> list[RecallHit]:
-        """RF-Mem 回忆路径：PPR 从首跳种子扩散，取与 query 共享实体/词面的近邻记忆。"""
+        """回忆路径：PPR 从首跳种子扩散，取与 query 共享实体/词面的近邻记忆。"""
         seeds = neighbor_top_scores(hits, k=3)
         ppr = self.graph.ppr(seeds, recall_query.scope)
         if not ppr:

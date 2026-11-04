@@ -6,7 +6,7 @@
   "reader": "hf:Qwen/Qwen3.5-0.8B",
   "judge": "judge:hf:Qwen/Qwen3.5-0.8B",
   "methods": {
-    "mem0": {
+    "External-Lib": {
       "retrieval": {
         "n": 48,
         "unit_recall_any": 0.9166666666666666,
@@ -1179,5 +1179,5 @@
     }
   },
   "elapsed_s": 613.2,
-  "note": "官方 mem0ai 2.2.1，infer=False，hashing embedder，未启用 BM25（fastembed 模型下载失败）"
+  "note": "外部库基线：mem0ai 2.2.1，infer=False，hashing embedder，未启用 BM25（fastembed 模型下载失败）"
 }

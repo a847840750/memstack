@@ -1,6 +1,6 @@
 """公开数据集评测：LoCoMo + LongMemEval (oracle)。
 
-评测目标不是复现论文的 LLM-as-judge 分数，而是衡量**记忆检索层**：
+评测目标是衡量**记忆检索层**，而不是端到端 QA 分数：
   - Unit Recall@k：证据所在会话是否被取回
   - All-Unit Recall：所有证据会话是否都取回
   - Evidence-Turn Hit：证据原句是否出现在上下文中
@@ -515,7 +515,7 @@ class NullExtractor:
 
 
 def variant_stack(base: MemoryStack, **overrides: Any) -> MemoryStack:
-    """复用同一份写入结果，只替换检索配置，做 SOTA 风格的可控对照。"""
+    """复用同一份写入结果，只替换检索配置，做同库可控对照。"""
     config = replace(base.config, **overrides)
     config.validate()
     return MemoryStack(
@@ -529,15 +529,15 @@ def variant_stack(base: MemoryStack, **overrides: Any) -> MemoryStack:
 
 
 def build_variant_stacks(base: MemoryStack) -> dict[str, tuple[MemoryStack, list[MemoryKind] | None]]:
-    """SOTA 风格基线：共享同一记忆库，只改变读取策略，避免重复写入带来的差异。"""
+    """机制基线：共享同一记忆库，只改变读取策略，避免重复写入带来的差异。"""
     return {
         # MemStack-mr：v2/v3 的多轮词袋补证（关闭 v4 证据链），用于隔离证据链的增量
         "MemStack-mr": (
             variant_stack(base, evidence_chain=False, multi_round=True),
             None,
         ),
-        # Mem0 风格：抽取事实 + 语义/词法/实体混合，不做时间/图/路由/重排
-        "Mem0-like": (
+        # Fact+Hybrid：抽取事实 + 语义/词法/实体混合，不做时间/图/路由/重排
+        "Fact+Hybrid": (
             variant_stack(
                 base,
                 use_temporal=False, use_graph=False, use_routing=False, use_rerank=False,
@@ -546,8 +546,8 @@ def build_variant_stacks(base: MemoryStack) -> dict[str, tuple[MemoryStack, list
             ),
             None,
         ),
-        # Zep/Graphiti 风格：时间 + 图 + 混合检索
-        "Zep-like": (
+        # Temporal-Graph：时间 + 图 + 混合检索
+        "Temporal-Graph": (
             variant_stack(
                 base,
                 use_temporal=True, use_graph=True, use_routing=False, use_rerank=True,
@@ -555,8 +555,8 @@ def build_variant_stacks(base: MemoryStack) -> dict[str, tuple[MemoryStack, list
             ),
             None,
         ),
-        # A-MEM 风格：事实笔记 + 纯向量
-        "A-MEM-like": (
+        # Fact+Dense：事实笔记 + 纯向量
+        "Fact+Dense": (
             variant_stack(
                 base,
                 use_temporal=False, use_graph=False, use_routing=False, use_rerank=False,
@@ -565,8 +565,8 @@ def build_variant_stacks(base: MemoryStack) -> dict[str, tuple[MemoryStack, list
             ),
             None,
         ),
-        # MemoryOS 风格：只取 episode + 热度/时效先验
-        "MemoryOS-like": (
+        # Episode+Prior：只取 episode + 热度/时效先验
+        "Episode+Prior": (
             variant_stack(
                 base,
                 use_temporal=False, use_graph=False, use_routing=False, use_rerank=False,
@@ -786,8 +786,8 @@ def run_locomo(args: argparse.Namespace) -> dict[str, Any]:
         return index_cache[key]
 
     methods: dict[str, list[dict[str, Any]]] = {
-        "MemStack": [], "MemStack-mr": [], "MemStack-ep": [], "Mem0-like": [],
-        "Zep-like": [], "A-MEM-like": [], "MemoryOS-like": [], "Dense only": [],
+        "MemStack": [], "MemStack-mr": [], "MemStack-ep": [], "Fact+Hybrid": [],
+        "Temporal-Graph": [], "Fact+Dense": [], "Episode+Prior": [], "Dense only": [],
         "BM25 only": [], "Full context": [],
     }
     variants = build_variant_stacks(stack)
@@ -895,8 +895,8 @@ def run_lme(args: argparse.Namespace) -> dict[str, Any]:
         return index_cache[key]
 
     methods: dict[str, list[dict[str, Any]]] = {
-        "MemStack": [], "MemStack-mr": [], "MemStack-ep": [], "Mem0-like": [],
-        "Zep-like": [], "A-MEM-like": [], "MemoryOS-like": [], "Dense only": [],
+        "MemStack": [], "MemStack-mr": [], "MemStack-ep": [], "Fact+Hybrid": [],
+        "Temporal-Graph": [], "Fact+Dense": [], "Episode+Prior": [], "Dense only": [],
         "BM25 only": [], "Full context": [],
     }
     variants = build_variant_stacks(stack)

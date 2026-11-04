@@ -577,7 +577,7 @@
           }
         }
       },
-      "Mem0-like": {
+      "Fact+Hybrid": {
         "overall": {
           "n": 297,
           "unit_recall_any": 0.8181818181818182,
@@ -767,7 +767,7 @@
           }
         }
       },
-      "Zep-like": {
+      "Temporal-Graph": {
         "overall": {
           "n": 297,
           "unit_recall_any": 0.8417508417508418,
@@ -957,7 +957,7 @@
           }
         }
       },
-      "A-MEM-like": {
+      "Fact+Dense": {
         "overall": {
           "n": 297,
           "unit_recall_any": 0.6868686868686869,
@@ -1147,7 +1147,7 @@
           }
         }
       },
-      "MemoryOS-like": {
+      "Episode+Prior": {
         "overall": {
           "n": 297,
           "unit_recall_any": 0.7575757575757576,

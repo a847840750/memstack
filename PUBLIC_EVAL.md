@@ -1,7 +1,7 @@
 # MemStack 公开数据集评测
 
 > **版本说明**：本文件保留 v1 评测（LoCoMo 400 题 / LongMemEval oracle 500 题）。
-> v2 已加入多轮补证、证据回填、NDCG/延迟/bootstrap CI 与 SOTA 风格基线，
+> v2 已加入多轮补证、证据回填、NDCG/延迟/bootstrap CI 与机制级基线，
 > 最新综合结果与分数对照见 [IMPROVEMENTS.md](IMPROVEMENTS.md)。
 
 > 评测日期：2026-10-28
@@ -34,7 +34,6 @@
 
 ### 1.1 LoCoMo
 
-- 论文：Maharana et al., **Evaluating Very Long-Term Conversational Memory of LLM Agents**, ACL 2024（arXiv:2402.17753）
 - 数据：10 个 conversation，共 **1986** 个 QA，平均约 300 轮/对话、约 9000 token/对话
 - 题型：multi-hop 282、temporal 321、open-domain 96、single-hop 841、adversarial 446
 - 证据：每个 QA 带 `evidence`（如 `D1:3`），可映射到具体对话轮
@@ -47,7 +46,6 @@
 
 ### 1.2 LongMemEval（oracle）
 
-- 论文：Wu et al., **LongMemEval: Benchmarking Chat Assistants on Long-Term Interactive Memory**, ICLR 2025（arXiv:2410.10813）
 - 数据：500 题；本次使用 `longmemeval_oracle`（**只含证据会话，不含 distractor**）
 - 题型：temporal-reasoning 133、multi-session 133、knowledge-update 78、single-session-assistant 56、single-session-user 70、single-session-preference 30
 - 每题 1–6 个证据会话；每个 turn 有 `has_answer` 标记
@@ -171,7 +169,7 @@
 
 LoCoMo multi-hop All-Unit 22.8% / 29.1%，LongMemEval multi-session 66.2% / 88.7%：
 一次 top-K 很难同时命中所有证据会话。路线：
-- 先检索，再用已命中实体/项目做第二轮检索（RF-Mem / MA-RAG 的多轮思路）；
+- 先检索，再用已命中实体/项目做第二轮检索；
 - 对 multi-hop 查询提高 `top_k` 或预算；
 - 用 PPR 从已命中实体扩展到相邻证据（当前图已具备，但权重偏保守）。
 
@@ -222,7 +220,7 @@ python public_eval.py --dataset longmemeval --budget 800 --turns 2 --episode-cha
 2. **LongMemEval 使用 oracle 版本**，只含证据会话；Unit Recall@k 对所有方法都是 100%，
    真实 `longmemeval_s` 有约 40 个 distractor session/题，难度更高。本次未跑，原因是 277MB 数据 + CPU 写入成本。
 3. **无 LLM reader**：Ans Strict/Ans Token 只衡量“答案是否在上下文里”，不代表最终 QA 准确率；
-   不能与 LoCoMo 论文的 F1/BLEU 或 LongMemEval 的 GPT-4o judge 直接比较。
+   不能与 LoCoMo / LongMemEval 的官方端到端指标直接比较。
 4. **规则抽取器 + hashing embedder**：不是生产配置；换 `LLMExtractor` / BGE 后结果会变化。
 5. **Token 估算是启发式**（英文词 ×1.3 + 中文字），与具体 tokenizer 有偏差；但所有方法用同一估算器，相对比较公平。
 6. **Turn Strict 受压缩影响**：MemStack 的 episode 字符上限（700/900）会截断长轮次；
@@ -231,18 +229,7 @@ python public_eval.py --dataset longmemeval --budget 800 --turns 2 --episode-cha
 
 ---
 
-## 6. 引用
+## 6. 数据来源
 
-```bibtex
-@inproceedings{maharana2024locomo,
-  title={Evaluating Very Long-Term Conversational Memory of LLM Agents},
-  author={Maharana, Adyasha and Lee, Dong-Ho and Tulyakov, Sergey and Bansal, Mohit and Barbieri, Francesco and Fang, Yuwei},
-  booktitle={ACL}, year={2024}
-}
-
-@inproceedings{wu2024longmemeval,
-  title={LongMemEval: Benchmarking Chat Assistants on Long-Term Interactive Memory},
-  author={Wu, Di and Wang, Hongwei and Yu, Wenhao and Zhang, Yuwei and Chang, Kai-Wei and Yu, Dong},
-  booktitle={ICLR}, year={2025}
-}
-```
+- LoCoMo：`https://modelscope.cn/datasets/evalscope/locomo/resolve/master/locomo10.json`
+- LongMemEval oracle：`https://hf-mirror.com/datasets/xiaowu0162/longmemeval/resolve/main/longmemeval_oracle`

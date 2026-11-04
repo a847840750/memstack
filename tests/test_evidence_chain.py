@@ -184,7 +184,7 @@ class EndToEndEnumerationTest(unittest.TestCase):
 
 
 class StatusPackingTest(unittest.TestCase):
-    """TokenPilot cache-aware 落点：预算不足时 active（当前值）优先、历史值放尾部。"""
+    """生命周期感知打包：预算不足时 active（当前值）优先、历史值放尾部。"""
 
     def setUp(self) -> None:
         self.stack = MemoryStack()
